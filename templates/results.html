@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Scan Results</title>
+  <style>
+    body { font-family: Arial; background: #f4f6f8; padding: 20px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background-color: #e8e8e8; }
+    h2 { color: #333; }
+  </style>
+</head>
+<body>
+  <h2>Scan Results</h2>
+  <p>Fetched Emails: {{ fetched }}</p>
+  <p>Unique Emails: {{ uniques }}</p>
+  <p>Duplicate Emails: {{ duplicates|length }}</p>
+
+  {% if duplicates %}
+    <form action="/delete" method="POST">
+      <table>
+        <tr>
+          <th>Select</th>
+          <th>From</th>
+          <th>Subject</th>
+          <th>Date</th>
+        </tr>
+        {% for d in duplicates %}
+          <tr>
+            <td><input type="checkbox" name="ids" value="{{ d.id }}"></td>
+            <td>{{ d.from }}</td>
+            <td>{{ d.subject }}</td>
+            <td>{{ d.date }}</td>
+          </tr>
+        {% endfor %}
+      </table>
+      <button type="submit">Move Selected to Trash</button>
+    </form>
+  {% else %}
+    <p>No duplicates found.</p>
+  {% endif %}
+</body>
+</html>
