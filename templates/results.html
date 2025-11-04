@@ -7,37 +7,52 @@
     table { width: 100%; border-collapse: collapse; margin-top: 20px; }
     th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
     th { background-color: #e8e8e8; }
-    h2 { color: #333; }
+    h2, h3 { color: #333; }
   </style>
 </head>
 <body>
   <h2>Scan Results</h2>
   <p>Fetched Emails: {{ fetched }}</p>
   <p>Unique Emails: {{ uniques }}</p>
-  <p>Duplicate Emails: {{ duplicates|length }}</p>
+  <p>Exact Duplicates: {{ duplicates|length }}</p>
 
+  <h3>Exact Duplicates (100%)</h3>
   {% if duplicates %}
     <form action="/delete" method="POST">
       <table>
-        <tr>
-          <th>Select</th>
-          <th>From</th>
-          <th>Subject</th>
-          <th>Date</th>
-        </tr>
+        <tr><th>Select</th><th>From</th><th>Subject</th><th>Date</th></tr>
         {% for d in duplicates %}
-          <tr>
-            <td><input type="checkbox" name="ids" value="{{ d.id }}"></td>
-            <td>{{ d.from }}</td>
-            <td>{{ d.subject }}</td>
-            <td>{{ d.date }}</td>
-          </tr>
+        <tr>
+          <td><input type="checkbox" name="ids" value="{{ d.id }}"></td>
+          <td>{{ d.from }}</td>
+          <td>{{ d.subject }}</td>
+          <td>{{ d.date }}</td>
+        </tr>
         {% endfor %}
       </table>
       <button type="submit">Move Selected to Trash</button>
     </form>
   {% else %}
-    <p>No duplicates found.</p>
+    <p>No exact duplicates found 🎉</p>
+  {% endif %}
+
+  <hr>
+
+  <h3>Near Duplicates (Similarity 85–99%)</h3>
+  {% if similars %}
+    <table>
+      <tr><th>From</th><th>Subject 1</th><th>Subject 2</th><th>Similarity %</th></tr>
+      {% for pair in similars %}
+      <tr>
+        <td>{{ pair.email1.from }}</td>
+        <td>{{ pair.email1.subject }}</td>
+        <td>{{ pair.email2.subject }}</td>
+        <td>{{ pair.similarity }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+  {% else %}
+    <p>No near duplicates found.</p>
   {% endif %}
 </body>
 </html>

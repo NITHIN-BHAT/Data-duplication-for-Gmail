@@ -1,99 +1,153 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gmail Data De-duplication</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .container {
-            background: #ffffff;
-            padding: 40px 50px;
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-            text-align: center;
-            width: 350px;
-        }
-        h1 {
-            margin-bottom: 25px;
-            font-size: 24px;
-        }
-        p {
-            font-size: 16px;
-            margin-bottom: 20px;
-        }
-        input[type="number"] {
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-            font-size: 16px;
-            width: 100%;
-            margin-bottom: 20px;
-        }
-        button {
-            padding: 12px 20px;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-            width: 100%;
-            margin-bottom: 10px;
-            transition: all 0.3s ease;
-        }
-        .login { background: #4285F4; color: #fff; }
-        .login:hover { background: #357ae8; }
-        .logout { background: #db4437; color: #fff; }
-        .logout:hover { background: #c23321; }
-        .dedupe { background: #0f9d58; color: #fff; }
-        .dedupe:hover { background: #0b8043; }
-        .flash-message {
-            margin-top: 20px;
-            padding: 10px;
-            background: #e0f7e9;
-            border-radius: 8px;
-            color: #0f9d58;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gmail Data De-duplication</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Poppins", sans-serif;
+    }
+
+    body {
+      height: 100vh;
+      background: linear-gradient(135deg, #dfe9f3 0%, #ffffff 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.4);
+      border-radius: 25px;
+      padding: 50px 45px;
+      width: 380px;
+      text-align: center;
+      box-shadow: 0 8px 40px rgba(0, 0, 0, 0.15);
+      backdrop-filter: blur(15px);
+      animation: fadeUp 0.8s ease;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h1 {
+      font-size: 26px;
+      margin-bottom: 10px;
+      color: #202124;
+      font-weight: 700;
+    }
+
+    h1 span { color: #4285F4; }
+
+    p {
+      color: #555;
+      font-size: 14px;
+      margin-bottom: 25px;
+    }
+
+    .logo {
+      font-size: 45px;
+      margin-bottom: 10px;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.8);
+      font-size: 14px;
+      outline: none;
+      margin-bottom: 20px;
+      transition: all 0.3s;
+    }
+
+    input:focus {
+      background: #fff;
+      box-shadow: 0 0 0 2px #4285F4;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-login {
+      background: linear-gradient(90deg, #34a853, #0f9d58);
+      margin-bottom: 15px;
+    }
+
+    .btn-login:hover {
+      transform: translateY(-2px);
+      background: linear-gradient(90deg, #0f9d58, #34a853);
+    }
+
+    .btn-google {
+      background: linear-gradient(90deg, #4285f4, #34a853);
+    }
+
+    .btn-google:hover {
+      transform: translateY(-2px);
+      background: linear-gradient(90deg, #357ae8, #0f9d58);
+    }
+
+    footer {
+      margin-top: 20px;
+      font-size: 12px;
+      color: #666;
+    }
+
+    footer span {
+      color: #4285f4;
+      font-weight: 600;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>📧 Gmail Data De-duplication</h1>
+  <div class="container">
+    <div class="logo">📧</div>
+    <h1><span>Gmail</span> De-duplication</h1>
+    <p>Remove duplicate emails quickly and securely.</p>
 
-        {% if signed_in %}
-            <p>You are signed in ✅</p>
+    {% if signed_in %}
+      <form action="{{ url_for('dedupe') }}" method="POST">
+        <label>Number of emails to scan:</label>
+        <input type="number" name="max_emails" value="100" min="10" max="500">
+        <button type="submit" class="btn-login">🧹 Scan for Duplicates</button>
+      </form>
 
-            <!-- Input for max emails -->
-            <form action="/dedupe" method="POST">
-                <label for="max_emails">Enter number of emails to scan:</label>
-                <input type="number" id="max_emails" name="max_emails" min="10" max="1000" value="100">
-                <button type="submit" class="dedupe">Scan & Remove Duplicates</button>
-            </form>
+      <a href="{{ url_for('signout') }}">
+        <button class="btn-google">🚪 Sign Out</button>
+      </a>
+    {% else %}
+      <a href="{{ url_for('authorize') }}">
+        <button class="btn-google">🔐 Sign in with Google</button>
+      </a>
+    {% endif %}
 
-            <a href="/signout"><button class="logout">Sign Out</button></a>
-
-            <!-- Flash messages -->
-            {% with messages = get_flashed_messages() %}
-              {% if messages %}
-                <div class="flash-message">
-                  {% for message in messages %}
-                    <p>{{ message }}</p>
-                  {% endfor %}
-                </div>
-              {% endif %}
-            {% endwith %}
-
-        {% else %}
-            <p>Please sign in with Google to continue</p>
-            <a href="/authorize"><button class="login">Sign in with Google</button></a>
-        {% endif %}
-    </div>
+    <footer>
+      Built with ❤️ using <span>Flask</span> & <span>Gmail API</span>
+    </footer>
+  </div>
 </body>
 </html>

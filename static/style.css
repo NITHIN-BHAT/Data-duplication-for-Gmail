@@ -1,0 +1,82 @@
+body {
+  background: #f4f7fa;
+  font-family: "Poppins", sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.card {
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+  padding: 40px;
+  width: 400px;
+  text-align: center;
+}
+
+.icon {
+  width: 60px;
+  margin-bottom: 15px;
+}
+
+input {
+  width: 80%;
+  padding: 10px;
+  margin: 15px 0;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+}
+
+.btn-green, .btn-blue {
+  width: 85%;
+  margin: 10px 0;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.btn-green { background: #34a853; }
+.btn-blue { background: linear-gradient(90deg, #4285F4, #34A853); }
+
+.result-card {
+  background: #fff;
+  border-radius: 15px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+  padding: 30px;
+  width: 800px;
+  margin: 30px auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+th, td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+}
+
+th {
+  background: #f2f2f2;
+}
+
+.similarity-bar {
+  height: 10px;
+  border-radius: 5px;
+  background: #ddd;
+  position: relative;
+}
+
+.similarity-bar div {
+  height: 10px;
+  border-radius: 5px;
+  background: #34a853;
+}
