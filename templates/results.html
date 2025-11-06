@@ -3,24 +3,36 @@
 <head>
   <title>Scan Results</title>
   <style>
-    body { font-family: Arial; background: #f4f6f8; padding: 20px; }
-    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-    th { background-color: #e8e8e8; }
-    h2, h3 { color: #333; }
+    body { font-family: Arial, sans-serif; background: #f4f6f8; padding: 20px; color:#222; }
+    h2, h3 { margin: 8px 0; }
+    table { width: 100%; border-collapse: collapse; margin-top: 14px; background:#fff; }
+    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; font-size:14px; }
+    th { background-color: #eef2f7; }
+    small { color:#555; font-style:italic; }
+    .btn { margin-top: 12px; padding: 10px 14px; border: none; border-radius: 6px; cursor: pointer; font-weight:600; }
+    .btn-delete { background:#e74c3c; color:#fff; }
+    .panel { background:#fff; border:1px solid #e0e0e0; border-radius:8px; padding:16px; margin-top:16px; }
+    .btn-smart { background:#2ecc71; color:#fff; }
+    hr { margin: 24px 0; border: none; border-top:1px solid #e0e0e0; }
   </style>
 </head>
 <body>
-  <h2>Scan Results</h2>
-  <p>Fetched Emails: {{ fetched }}</p>
-  <p>Unique Emails: {{ uniques }}</p>
-  <p>Exact Duplicates: {{ duplicates|length }}</p>
+  <h2>📧 Scan Results</h2>
+  <p>Fetched Emails: <strong>{{ fetched }}</strong></p>
+  <p>Estimated Unique Emails: <strong>{{ uniques }}</strong></p>
+  <p>Exact Duplicates Found: <strong>{{ duplicate_count }}</strong></p>
 
-  <h3>Exact Duplicates (100%)</h3>
+
+  <h3>Exact Duplicates (Sender + Subject match)</h3>
   {% if duplicates %}
     <form action="/delete" method="POST">
       <table>
-        <tr><th>Select</th><th>From</th><th>Subject</th><th>Date</th></tr>
+        <tr>
+          <th>Select</th>
+          <th>From</th>
+          <th>Subject</th>
+          <th>Date</th>
+        </tr>
         {% for d in duplicates %}
         <tr>
           <td><input type="checkbox" name="ids" value="{{ d.id }}"></td>
@@ -30,18 +42,33 @@
         </tr>
         {% endfor %}
       </table>
-      <button type="submit">Move Selected to Trash</button>
+      <small>💡 Selecting rows deletes only those emails.</small><br>
+      <button type="submit" class="btn btn-delete">🗑 Delete Selected</button>
     </form>
+
+    <div class="panel">
+      <h3>🤖 Smart Delete</h3>
+      <p>One-click cleanup: <strong>keeps the newest email</strong> from each duplicate group and moves older copies to Trash.</p>
+      <form action="/smart_delete" method="POST">
+        <button type="submit" class="btn btn-smart">Run Smart Delete</button>
+      </form>
+      <small>Safe by design: at least one copy of every conversation stays in your mailbox.</small>
+    </div>
   {% else %}
     <p>No exact duplicates found 🎉</p>
   {% endif %}
 
   <hr>
 
-  <h3>Near Duplicates (Similarity 85–99%)</h3>
+  <h3>Near Duplicates (Similarity 85–99% by Subject)</h3>
   {% if similars %}
     <table>
-      <tr><th>From</th><th>Subject 1</th><th>Subject 2</th><th>Similarity %</th></tr>
+      <tr>
+        <th>From</th>
+        <th>Subject 1</th>
+        <th>Subject 2</th>
+        <th>Similarity (%)</th>
+      </tr>
       {% for pair in similars %}
       <tr>
         <td>{{ pair.email1.from }}</td>

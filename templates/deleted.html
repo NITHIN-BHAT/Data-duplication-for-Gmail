@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Deletion Summary</title>
+  <style>
+    body { font-family: Arial, sans-serif; background:#f8fafc; padding: 24px; color:#222; }
+    h2 { margin-bottom: 6px; }
+    .section { margin-top: 18px; }
+    table { width: 100%; border-collapse: collapse; background:#fff; margin-top: 10px; }
+    th, td { border:1px solid #ddd; padding:8px; font-size:14px; text-align:left; }
+    th { background:#eef2f7; }
+    .ok { color:#2ecc71; }
+    .del { color:#e74c3c; }
+    a { display:inline-block; margin-top: 16px; text-decoration:none; color:#007bff; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <h2>🗑 Deletion Summary</h2>
+
+  {% if kept_one %}
+    <p class="ok">Smart Delete finished — kept the newest email in each duplicate group.</p>
+  {% else %}
+    <p>Deleted the selected emails.</p>
+  {% endif %}
+
+  {% if kept_mails and kept_mails|length > 0 %}
+    <div class="section">
+      <h3 class="ok">Kept (Newest)</h3>
+      <table>
+        <tr><th>From</th><th>Subject</th><th>Date</th></tr>
+        {% for m in kept_mails %}
+          <tr>
+            <td>{{ m.from }}</td>
+            <td>{{ m.subject }}</td>
+            <td>{{ m.date }}</td>
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+  {% endif %}
+
+  {% if deleted_mails and deleted_mails|length > 0 %}
+    <div class="section">
+      <h3 class="del">Moved to Trash</h3>
+      <table>
+        <tr><th>From</th><th>Subject</th><th>Date</th></tr>
+        {% for m in deleted_mails %}
+          <tr>
+            <td>{{ m.from }}</td>
+            <td>{{ m.subject }}</td>
+            <td>{{ m.date }}</td>
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+  {% else %}
+    <p>No emails were deleted.</p>
+  {% endif %}
+
+  <a href="/">← Back to Home</a>
+</body>
+</html>
